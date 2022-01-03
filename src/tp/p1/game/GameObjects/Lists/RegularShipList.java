@@ -1,89 +1,82 @@
-package tp.p1.classes;
+package tp.p1.game.GameObjects.Lists;
 
-public class DestroyerShipList {
-	private DestroyerShip[] dShipList;
+public class RegularShipList {
+	private RegularAlien[] rShipList;
 	private int numNaves;
 	
 	//constructor
-	public DestroyerShipList(int numNaves) {
+	public RegularShipList(int numNaves) {
 		this.numNaves = 0;
-		dShipList = new DestroyerShip[numNaves];
+		rShipList = new RegularAlien[numNaves];
 	}
 	
 	//getters
 	public int getColNave(int pos) {
-		return dShipList[pos].getCol();
+		return rShipList[pos].getCol();
 	}
 	public int getFilNave(int pos) {
-		return dShipList[pos].getFil();
+		return rShipList[pos].getFil();
+	}
+	public int getLife(int pos) {
+		return rShipList[pos].getLife();
 	}
 	public int getLength() {
 		return numNaves;
 	}
 	//metodos para insercion y borrado de naves de la lista
-	public void anadir(DestroyerShip dShip) {
-		dShipList[numNaves] = dShip;
+	public void anadir(RegularAlien rShip){
+		rShipList[numNaves] = rShip;
 		numNaves++;
 	}
-	public void borrarNave(int pos) {
-		dShipList[pos] = null;
+	private void borrarNave(int pos) {
+		rShipList[pos] = null;
 		for (int i = pos; i < numNaves - 1; i++) {
-			dShipList[i] = dShipList[i + 1];
+			rShipList[i] = rShipList[i + 1];
 		}
 		numNaves--;
-		dShipList[numNaves] = null;
-	}
-	//metodos de movimiento
+		rShipList[numNaves] = null;
+	}	
+	//metodos para el movimiento de las naves de la lista
 	public void mover(boolean irDerecha) {
-		if (irDerecha) derecha();
-		else izquierda();
+		if (irDerecha) this.derecha();
+		else this.izquierda();
 	}
 	public void abajo() {
 		for(int i=0; i < numNaves; i++)
-			dShipList[i].moverAbajo();
+			rShipList[i].moverAbajo();
 	}
 	private void derecha() {
 		for(int i=0; i < numNaves; i++)
-			dShipList[i].moverDer();
+			rShipList[i].moverDer();
 	}
 	private void izquierda() {
 		for(int i=0; i < numNaves; i++)
-			dShipList[i].moverIzq();
-	}
-	//metodos de disparo
-	public boolean puedeDisparar(int pos) {
-		if (dShipList[pos].puedeDisparar()) {
-			dShipList[pos].dispara();
-			return true;
-		}
-		else return false;
-	}
-	public Proyectil dispara(int pos) {
-		return dShipList[pos].dispara();
+			rShipList[i].moverIzq();
 	}
 	//otros metodos
-	public boolean pared() {
-		boolean pared=false;
+	public boolean pared(){
+		boolean pared = false;
 		for (int i=0; i < numNaves && !pared; i++)
-			if (dShipList[i].getCol() == 0 || dShipList[i].getCol() == 8)
+			if (rShipList[i].getCol() == 0 || rShipList[i].getCol() == 8)
 				pared= true;
 		return pared;
 	}
 	public boolean alcanzaFilaUcm() {
 		boolean haLlegado = false;
 		for (int i = 0; i < numNaves && !haLlegado; i++)
-			if (dShipList[i].getFil() == 7) haLlegado = true;
+			if (rShipList[i].getFil() == 7) haLlegado = true;
 		return haLlegado;
 	}
 	public void bajarVidaNave(int pos) {
-		dShipList[pos].reduceLife();
-		if (!dShipList[pos].estaViva())
+		rShipList[pos].reduceLife();
+		if (!rShipList[pos].estaViva()) {
 			borrarNave(pos);
+		}
 	}
 	public boolean algunaViva() {
 		boolean vivo = false;
 		for (int i = 0; i < numNaves && !vivo; i++) {
-			vivo = dShipList[i].getLife() > 0;
+			vivo = rShipList[i].getLife() > 0;
 		}
 		return vivo;
 	}
@@ -92,12 +85,12 @@ public class DestroyerShipList {
 		boolean encontrado = false;
 		int pos = 0;
 		while (pos < numNaves && !encontrado) {
-			if (dShipList[pos].isInPos(fil, col)) {
+			if (rShipList[pos].isInPos(fil, col)) {
 				encontrado = true;
 			}
 			pos++;
 		}
-		if (encontrado) return dShipList[--pos].toString();
+		if (encontrado) return rShipList[--pos].toString();
 		else return "";
 	}
 }

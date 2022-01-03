@@ -1,13 +1,15 @@
-package tp.p1.classes;
+package tp.p1.game.GameObjects.Lists;
+
+import tp.p1.game.GameObjects.Weapons.Bomb;
 
 public class BombList {	
-	private Proyectil[] proyectilList;
+	private Bomb[] proyectilList;
 	private int numProyectiles;
-	private Misil misil;
+	private UCMMissile misil;
 	
 	//constructor
 	public BombList(int maxBombas) {
-		proyectilList = new Proyectil[maxBombas];
+		proyectilList = new Bomb[maxBombas];
 		numProyectiles = 0;
 		misil = null;
 	}
@@ -23,14 +25,15 @@ public class BombList {
 		return numProyectiles;
 	}
 	//metodos para insercion y borrado de proyectiles/misiles
-	public void anadir(Misil misil) {
+	public void anadir(UCMMissile misil) {
 		this.misil = misil;
 	}
-	public void anadir(Proyectil proyectil) {
-		proyectilList[numProyectiles] = proyectil;
+	public void anadir(Bomb bomb) {
+		proyectilList[numProyectiles] = bomb;
 		numProyectiles++;
 	}
 	public void borrar() {
+		misil.estoyEliminado();
 		misil = null;
 	}
 	public void borrar(int pos) {
@@ -49,36 +52,44 @@ public class BombList {
 			else proyectilList[i].mover();
 		}
 		if (misil != null) {
-			if (misil.getFil() == 0) misil = null;
+			if (misil.getFil() == 0) {
+				misil.estoyEliminado();
+				misil = null;
+			}
 			else misil.mover();
 		}
 	}
 	//metodos de comprobacion de choques
-	public int comprobarChoqueUcm(int fil, int col) {
+	public boolean comprobarChoqueUcm(int fil, int col) {
 		boolean enc = false;
 		int pos = numProyectiles - 1;
 		while (pos >= 0 && !enc) {
 			enc = (proyectilList[pos].getFil() == fil && proyectilList[pos].getCol() == col);
 			pos--;
 		}
-		if (enc) return ++pos;
-		else return -1;
+		if (enc) {
+			borrar(++pos);
+		}
+		return enc;
 	}
-	public int comprobarChoqueBombas(){
+	public void comprobarChoqueBombas(){
 		boolean enc = false;
 		int pos = numProyectiles - 1;
 		while (pos >= 0 && !enc) {
-			enc = ((misil.getFil() - proyectilList[pos].getFil() < 2) && (misil.getFil() - proyectilList[pos].getFil() > -1) && proyectilList[pos].getCol() == misil.getCol());
+			enc = ((misil.getFil() - proyectilList[pos].getFil() < 1) && (misil.getFil() - proyectilList[pos].getFil() > -2) && proyectilList[pos].getCol() == misil.getCol());
 			pos--;
 		}
-		if (enc) return ++pos;
-		else return -1;	
+		if (enc) {
+			borrar();
+			borrar(++pos);
+		}
 	}
 	public boolean comprobarChoqueNave(int fil, int col) {
 		return misil.getFil() == fil && misil.getCol() == col;
 	}
 	public boolean ovniAlcanzado(int fil, int col) {
 		if (col == misil.getCol() && misil.getFil() == fil) {
+			misil.estoyEliminado();
 			misil = null;
 			return true;
 		}
@@ -88,10 +99,10 @@ public class BombList {
 	public boolean existeMisil() {
 		return misil != null;
 	}
-	public boolean existeProyectil(Proyectil proyectil) {
+	public boolean existeProyectil(Bomb bomb) {
 		boolean enc = false;
 		for (int i = 0; i < numProyectiles; i++) {
-			if (proyectil == proyectilList[i]) {
+			if (bomb == proyectilList[i]) {
 				enc = true;
 			}
 		}
